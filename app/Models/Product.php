@@ -12,13 +12,16 @@ class Product extends Model
     protected $fillable = [
         'game_id',
         'name',
+        'description',
         'price',
-        'type',
-        'status',
+        'stock',
+        'is_active', // ← PENTING: Ganti 'status' dan 'type' menjadi 'is_active'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'is_active' => 'boolean', // ← Cast sebagai boolean
+        'stock' => 'integer',
     ];
 
     // Relationships
@@ -40,30 +43,67 @@ class Product extends Model
     // Scopes
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('is_active', true);
     }
 
-    public function scopeAuto($query)
+    public function scopeInactive($query)
     {
-        return $query->where('type', 'auto');
+        return $query->where('is_active', false);
     }
 
-    public function scopeManual($query)
+    public function scopeInStock($query)
     {
-        return $query->where('type', 'manual');
+        return $query->where(function ($q) {
+            $q->whereNull('stock')
+                ->orWhere('stock', '>', 0);
+        });
+    }
+
+    public function scopeLowStock($query, $threshold = 10)
+    {
+        return $query->where('stock', '<=', $threshold)
+            ->whereNotNull('stock');
     }
 
     // Accessors
     public function getPriceFormattedAttribute()
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->price, 0, ',', '.');
+    }
+
+    public function getStockStatusAttribute()
+    {
+        if (is_null($this->stock)) {
+            return 'unlimited';
+        }
+
+        if ($this->stock <= 0) {
+            return 'out_of_stock';
+        }
+
+        if ($this->stock < 10) {
+            return 'low_stock';
+        }
+
+        return 'in_stock';
+    }
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->is_active && ($this->stock === null || $this->stock > 0);
+    }
+
+    // Accessor untuk kompatibilitas (jika ada code lama yang masih pakai 'status')
+    public function getStatusAttribute()
+    {
+        return $this->is_active ? 'active' : 'inactive';
     }
 
     // Helper Methods
     public function getActiveFlashSale()
     {
         return $this->flashSales()
-            ->where('status', 'active')
+            ->where('is_active', true)
             ->where('start_time', '<=', now())
             ->where('end_time', '>=', now())
             ->first();
@@ -79,5 +119,19 @@ class Product extends Model
         }
 
         return $this->price;
+    }
+
+    public function decreaseStock($amount = 1)
+    {
+        if ($this->stock !== null) {
+            $this->decrement('stock', $amount);
+        }
+    }
+
+    public function increaseStock($amount = 1)
+    {
+        if ($this->stock !== null) {
+            $this->increment('stock', $amount);
+        }
     }
 }

@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('game')->where('status', 'active');
+        $query = Product::with('game')->where('is_active', true);
 
         if ($request->has('game_id')) {
             $query->where('game_id', $request->game_id);
@@ -38,11 +38,12 @@ class ProductController extends Controller
             'game_id' => 'required|exists:games,id',
             'name' => 'required|string|max:100',
             'price' => 'required|numeric|min:0',
-            'type' => 'sometimes|in:auto,manual',
-            'status' => 'sometimes|in:active,inactive',
         ]);
 
-        $product = Product::create($request->all());
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
+        $product = Product::create($data);
 
         return response()->json([
             'message' => 'Product created successfully',
@@ -62,11 +63,16 @@ class ProductController extends Controller
             'game_id' => 'sometimes|exists:games,id',
             'name' => 'sometimes|string|max:100',
             'price' => 'sometimes|numeric|min:0',
-            'type' => 'sometimes|in:auto,manual',
-            'status' => 'sometimes|in:active,inactive',
         ]);
 
-        $product->update($request->all());
+        $data = $request->all();
+        if ($request->has('is_active')) {
+            $data['is_active'] = 1;
+        } else {
+            $data['is_active'] = 0;
+        }
+
+        $product->update($data);
 
         return response()->json([
             'message' => 'Product updated successfully',
@@ -88,8 +94,25 @@ class ProductController extends Controller
     }
 
     // ==================== PRODUCTS MANAGEMENT ====================
-    public function products()
+    public function products(Request $request)
     {
+        $query = Product::with('game');
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by game
+        if ($request->filled('game_id')) {
+            $query->where('game_id', $request->game_id);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active' ? 1 : 0);
+        }
+
         $products = Product::with('game')->latest()->paginate(20);
         return view('admin.products.index', compact('products'));
     }
@@ -108,10 +131,15 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
-            'is_active' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        // PENTING: Set is_active berdasarkan checkbox (1 jika checked, 0 jika tidak)
+        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+
+        // Handle stock: jika unlimited, set null
+        if ($request->input('stock_type') === 'unlimited') {
+            $validated['stock'] = null;
+        }
 
         Product::create($validated);
 
@@ -136,10 +164,15 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
-            'is_active' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        // PENTING: Set is_active berdasarkan checkbox (1 jika checked, 0 jika tidak)
+        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+
+        // Handle stock: jika unlimited, set null
+        if ($request->input('stock_type') === 'unlimited') {
+            $validated['stock'] = null;
+        }
 
         $product->update($validated);
 
@@ -154,5 +187,19 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product berhasil dihapus');
+    }
+
+    public function toggleStatus($id)
+    {
+        $product = Product::findOrFail($id);
+
+        // Toggle status
+        $product->is_active = !$product->is_active;
+        $product->save();
+
+        $status = $product->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()->route('admin.products.index')
+            ->with('success', "Product berhasil {$status}");
     }
 }

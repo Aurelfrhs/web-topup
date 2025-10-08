@@ -11,11 +11,17 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 255);
             $table->string('slug', 255)->unique();
-            $table->string('category', 100);
-            $table->text('description')->nullable();
             $table->string('image')->nullable();
+            $table->string('category', 100); // moba, battle-royale, mmorpg, fps, sports, others
+            $table->string('publisher', 255)->nullable();
+            $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            // Indexes
+            $table->index('category');
+            $table->index('is_active');
+            $table->index('slug');
         });
     }
 

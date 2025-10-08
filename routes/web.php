@@ -106,16 +106,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     });
 
     // ===============================
-    // GAMES MANAGEMENT
+    // GAMES MANAGEMENT (DIPERBAIKI)
     // ===============================
-    // Route::prefix('games')->name('games.')->group(function () {
-    //     Route::get('/', [AdminController::class, 'games'])->name('index');
-    //     Route::get('/create', [AdminController::class, 'createGame'])->name('create');
-    //     Route::post('/', [AdminController::class, 'storeGame'])->name('store');
-    //     Route::get('/{id}/edit', [AdminController::class, 'editGame'])->name('edit');
-    //     Route::put('/{id}', [AdminController::class, 'updateGame'])->name('update');
-    //     Route::delete('/{id}', [AdminController::class, 'deleteGame'])->name('delete');
-    // });
+    Route::prefix('games')->name('games.')->group(function () {
+        Route::get('/', [GameController::class, 'games'])->name('index');
+        Route::get('/create', [GameController::class, 'createGame'])->name('create');
+        Route::post('/', [GameController::class, 'storeGame'])->name('store');
+        Route::get('/{id}/edit', [GameController::class, 'editGame'])->name('edit');
+        Route::put('/{id}', [GameController::class, 'updateGame'])->name('update');
+        Route::delete('/{id}', [GameController::class, 'deleteGame'])->name('delete');
+        Route::post('/{id}/toggle-status', [GameController::class, 'toggleStatus'])->name('toggle-status');
+    });
 
     // ===============================
     // PRODUCTS MANAGEMENT
@@ -127,18 +128,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/{id}/edit', [ProductController::class, 'editProduct'])->name('edit');
         Route::put('/{id}', [ProductController::class, 'updateProduct'])->name('update');
         Route::delete('/{id}', [ProductController::class, 'deleteProduct'])->name('delete');
-    });
-
-    // ===============================
-    // GAMES MANAGEMENT
-    // ===============================
-    Route::prefix('games')->name('games.')->group(function () {
-        Route::get('/', [GameController::class, 'games'])->name('index');
-        Route::get('/create', [GameController::class, 'createProduct'])->name('create');
-        Route::post('/', [GameController::class, 'storeProduct'])->name('store');
-        Route::get('/{id}/edit', [GameController::class, 'editProduct'])->name('edit');
-        Route::put('/{id}', [GameController::class, 'updateProduct'])->name('update');
-        Route::delete('/{id}', [GameController::class, 'deleteProduct'])->name('delete');
     });
 
     // ===============================
@@ -162,8 +151,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     });
 
     // ===============================
-// PAYMENTS MANAGEMENT
-// ===============================
+    // PAYMENTS MANAGEMENT
+    // ===============================
     Route::prefix('payments')->name('payments.')->group(function () {
         Route::get('/', [PaymentController::class, 'payments'])->name('index');
         Route::get('/create', [PaymentController::class, 'createPayment'])->name('create');
@@ -200,14 +189,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // ===============================
     // FLASH SALES MANAGEMENT
     // ===============================
-    Route::prefix('flash-sales')->name('flash-sales.')->group(function () {
-        Route::get('/', [FlashSaleController::class, 'flashSales'])->name('index');
-        Route::get('/create', [FlashSaleController::class, 'createFlashSale'])->name('create');
-        Route::post('/', [FlashSaleController::class, 'storeFlashSale'])->name('store');
-        Route::get('/{id}/edit', [FlashSaleController::class, 'editFlashSale'])->name('edit');
-        Route::put('/{id}', [FlashSaleController::class, 'updateFlashSale'])->name('update');
-        Route::delete('/{id}', [FlashSaleController::class, 'deleteFlashSale'])->name('delete');
-    });
+    Route::get('/flash-sales', [FlashSaleController::class, 'index'])->name('flash-sales.index');
+    Route::get('/flash-sales/create', [FlashSaleController::class, 'create'])->name('flash-sales.create');
+    Route::post('/flash-sales', [FlashSaleController::class, 'store'])->name('flash-sales.store');
+    Route::get('/flash-sales/{id}/edit', [FlashSaleController::class, 'edit'])->name('flash-sales.edit');
+    Route::put('/flash-sales/{id}', [FlashSaleController::class, 'update'])->name('flash-sales.update');
+    Route::delete('/flash-sales/{id}', [FlashSaleController::class, 'destroy'])->name('flash-sales.destroy');
 
     // ===============================
     // SETTINGS MANAGEMENT

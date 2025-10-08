@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller
 {
@@ -76,9 +77,26 @@ class BannerController extends Controller
     }
 
     // ==================== BANNERS MANAGEMENT ====================
-    public function banners()
+    public function banners(Request $request)
     {
-        $banners = Banner::latest()->paginate(20);
+        $query = Banner::query();
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by position
+        if ($request->filled('position')) {
+            $query->where('position', $request->position);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active' ? 1 : 0);
+        }
+
+        $banners = $query->latest()->paginate(20);
         return view('admin.banners.index', compact('banners'));
     }
 
@@ -95,14 +113,14 @@ class BannerController extends Controller
             'image' => 'required|image|max:2048',
             'link' => 'nullable|url',
             'position' => 'required|in:home,games,flash-sale',
-            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('banners', 'public');
         }
 
-        $validated['is_active'] = $request->has('is_active');
+        // PENTING: Set is_active berdasarkan checkbox (1 jika checked, 0 jika tidak)
+        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
 
         Banner::create($validated);
 
@@ -126,7 +144,6 @@ class BannerController extends Controller
             'image' => 'nullable|image|max:2048',
             'link' => 'nullable|url',
             'position' => 'required|in:home,games,flash-sale',
-            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('image')) {
@@ -136,7 +153,8 @@ class BannerController extends Controller
             $validated['image'] = $request->file('image')->store('banners', 'public');
         }
 
-        $validated['is_active'] = $request->has('is_active');
+        // PENTING: Set is_active berdasarkan checkbox (1 jika checked, 0 jika tidak)
+        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
 
         $banner->update($validated);
 
@@ -156,5 +174,19 @@ class BannerController extends Controller
 
         return redirect()->route('admin.banners.index')
             ->with('success', 'Banner berhasil dihapus');
+    }
+
+    public function toggleStatus($id)
+    {
+        $banner = Banner::findOrFail($id);
+
+        // Toggle status
+        $banner->is_active = !$banner->is_active;
+        $banner->save();
+
+        $status = $banner->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()->route('admin.banners.index')
+            ->with('success', "Banner berhasil {$status}");
     }
 }

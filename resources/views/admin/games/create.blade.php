@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Banner')
-@section('page-title', 'Tambah Banner')
+@section('title', 'Tambah Game')
+@section('page-title', 'Tambah Game')
 
 @section('content')
     <div class="space-y-6">
@@ -16,21 +16,21 @@
             </a>
             <i class="fas fa-chevron-right text-xs"></i>
             <a
-                href="{{ route('admin.banners.index') }}"
+                href="{{ route('admin.games.index') }}"
                 class="hover:text-indigo-600"
-            >Banner</a>
+            >Game</a>
             <i class="fas fa-chevron-right text-xs"></i>
-            <span class="font-medium text-gray-900">Tambah Banner</span>
+            <span class="font-medium text-gray-900">Tambah Game</span>
         </nav>
 
         <!-- Header Section -->
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">Tambah Banner Baru</h1>
-                <p class="mt-2 text-gray-600">Buat banner promosi untuk menarik perhatian pelanggan</p>
+                <h1 class="text-3xl font-bold text-gray-900">Tambah Game Baru</h1>
+                <p class="mt-2 text-gray-600">Lengkapi informasi game untuk menambah katalog</p>
             </div>
             <a
-                href="{{ route('admin.banners.index') }}"
+                href="{{ route('admin.games.index') }}"
                 class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
             >
                 <i class="fas fa-arrow-left mr-2"></i>
@@ -39,10 +39,10 @@
         </div>
 
         <form
-            action="{{ route('admin.banners.store') }}"
+            action="{{ route('admin.games.store') }}"
             method="POST"
             enctype="multipart/form-data"
-            x-data="bannerForm()"
+            x-data="gameForm()"
         >
             @csrf
 
@@ -61,39 +61,39 @@
                                         <i class="fas fa-info-circle"></i>
                                     </div>
                                     <div>
-                                        <h2 class="text-lg font-semibold text-gray-900">Informasi Banner</h2>
-                                        <p class="text-sm text-gray-600">Detail utama banner promosi</p>
+                                        <h2 class="text-lg font-semibold text-gray-900">Informasi Dasar</h2>
+                                        <p class="text-sm text-gray-600">Data utama game</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="space-y-6 p-6">
-                                <!-- Title -->
+                                <!-- Game Name -->
                                 <div>
                                     <label
-                                        for="title"
+                                        for="name"
                                         class="block text-sm font-semibold text-gray-700"
                                     >
-                                        Judul Banner <span class="text-red-500">*</span>
+                                        Nama Game <span class="text-red-500">*</span>
                                     </label>
                                     <div class="relative mt-2">
                                         <input
                                             type="text"
-                                            id="title"
-                                            name="title"
-                                            value="{{ old('title') }}"
+                                            id="name"
+                                            name="name"
+                                            value="{{ old('name') }}"
                                             required
                                             maxlength="255"
-                                            x-model="bannerTitle"
-                                            placeholder="Contoh: Promo Flash Sale Hari Ini!"
-                                            class="@error('title') border-red-500 @enderror w-full rounded-lg border-2 border-gray-300 px-4 py-3 pr-16 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            x-model="gameName"
+                                            placeholder="Contoh: Mobile Legends: Bang Bang"
+                                            class="@error('name') border-red-500 @enderror w-full rounded-lg border-2 border-gray-300 px-4 py-3 pr-16 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         >
                                         <span
                                             class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400"
-                                            x-text="bannerTitle.length + '/255'"
+                                            x-text="gameName.length + '/255'"
                                         ></span>
                                     </div>
-                                    @error('title')
+                                    @error('name')
                                         <div class="mt-2 flex items-center text-sm text-red-600">
                                             <i class="fas fa-exclamation-circle mr-1"></i>
                                             {{ $message }}
@@ -101,8 +101,82 @@
                                     @enderror
                                     <p class="mt-2 text-xs text-gray-500">
                                         <i class="fas fa-lightbulb mr-1"></i>
-                                        Gunakan judul yang menarik dan mudah dibaca
+                                        Gunakan nama resmi game
                                     </p>
+                                </div>
+
+                                <!-- Category -->
+                                <div>
+                                    <label
+                                        for="category"
+                                        class="block text-sm font-semibold text-gray-700"
+                                    >
+                                        Kategori Game <span class="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        id="category"
+                                        name="category"
+                                        required
+                                        x-model="gameCategory"
+                                        class="@error('category') border-red-500 @enderror mt-2 w-full rounded-lg border-2 border-gray-300 px-4 py-3 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="">-- Pilih Kategori --</option>
+                                        <option
+                                            value="moba"
+                                            {{ old('category') == 'moba' ? 'selected' : '' }}
+                                        >MOBA</option>
+                                        <option
+                                            value="battle-royale"
+                                            {{ old('category') == 'battle-royale' ? 'selected' : '' }}
+                                        >Battle Royale</option>
+                                        <option
+                                            value="mmorpg"
+                                            {{ old('category') == 'mmorpg' ? 'selected' : '' }}
+                                        >MMORPG</option>
+                                        <option
+                                            value="fps"
+                                            {{ old('category') == 'fps' ? 'selected' : '' }}
+                                        >FPS</option>
+                                        <option
+                                            value="sports"
+                                            {{ old('category') == 'sports' ? 'selected' : '' }}
+                                        >Sports</option>
+                                        <option
+                                            value="others"
+                                            {{ old('category') == 'others' ? 'selected' : '' }}
+                                        >Lainnya</option>
+                                    </select>
+                                    @error('category')
+                                        <div class="mt-2 flex items-center text-sm text-red-600">
+                                            <i class="fas fa-exclamation-circle mr-1"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Publisher -->
+                                <div>
+                                    <label
+                                        for="publisher"
+                                        class="block text-sm font-semibold text-gray-700"
+                                    >
+                                        Publisher
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="publisher"
+                                        name="publisher"
+                                        value="{{ old('publisher') }}"
+                                        x-model="gamePublisher"
+                                        placeholder="Contoh: Moonton"
+                                        class="@error('publisher') border-red-500 @enderror mt-2 w-full rounded-lg border-2 border-gray-300 px-4 py-3 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                    @error('publisher')
+                                        <div class="mt-2 flex items-center text-sm text-red-600">
+                                            <i class="fas fa-exclamation-circle mr-1"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
 
                                 <!-- Description -->
@@ -111,63 +185,29 @@
                                         for="description"
                                         class="block text-sm font-semibold text-gray-700"
                                     >
-                                        Deskripsi Banner
+                                        Deskripsi Game
                                     </label>
                                     <textarea
                                         id="description"
                                         name="description"
-                                        rows="4"
-                                        x-model="bannerDescription"
-                                        placeholder="Jelaskan detail promosi atau informasi banner..."
+                                        rows="5"
+                                        x-model="gameDescription"
+                                        placeholder="Jelaskan tentang game ini..."
                                         class="@error('description') border-red-500 @enderror mt-2 w-full rounded-lg border-2 border-gray-300 px-4 py-3 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >{{ old('description') }}</textarea>
                                     <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
                                         <span>
                                             <i class="fas fa-info-circle mr-1"></i>
-                                            Deskripsi opsional untuk detail banner
+                                            Deskripsi membantu pelanggan mengenal game
                                         </span>
-                                        <span x-text="bannerDescription.length + ' karakter'"></span>
+                                        <span x-text="gameDescription.length + ' karakter'"></span>
                                     </div>
                                     @error('description')
                                         <div class="mt-2 flex items-center text-sm text-red-600">
                                             <i class="fas fa-exclamation-circle mr-1"></i>
                                             {{ $message }}
                                         </div>
-                                    @enderror
-                                </div>
-
-                                <!-- Link -->
-                                <div>
-                                    <label
-                                        for="link"
-                                        class="block text-sm font-semibold text-gray-700"
-                                    >
-                                        Link Banner (URL)
-                                    </label>
-                                    <div class="relative mt-2">
-                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                                            <i class="fas fa-link text-gray-400"></i>
-                                        </div>
-                                        <input
-                                            type="url"
-                                            id="link"
-                                            name="link"
-                                            value="{{ old('link') }}"
-                                            x-model="bannerLink"
-                                            placeholder="https://example.com/promo"
-                                            class="@error('link') border-red-500 @enderror w-full rounded-lg border-2 border-gray-300 py-3 pl-12 pr-4 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                        >
-                                    </div>
-                                    @error('link')
-                                        <div class="mt-2 flex items-center text-sm text-red-600">
-                                            <i class="fas fa-exclamation-circle mr-1"></i>
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                    <p class="mt-2 text-xs text-gray-500">
-                                        <i class="fas fa-info-circle mr-1"></i>
-                                        URL tujuan ketika banner diklik (opsional)
-                                    </p>
+                                    @enderror>
                                 </div>
                             </div>
                         </div>
@@ -181,8 +221,8 @@
                                         <i class="fas fa-image"></i>
                                     </div>
                                     <div>
-                                        <h2 class="text-lg font-semibold text-gray-900">Gambar Banner</h2>
-                                        <p class="text-sm text-gray-600">Upload gambar untuk banner</p>
+                                        <h2 class="text-lg font-semibold text-gray-900">Gambar Game</h2>
+                                        <p class="text-sm text-gray-600">Upload cover/icon game</p>
                                     </div>
                                 </div>
                             </div>
@@ -260,102 +300,6 @@
                             </div>
                         </div>
 
-                        <!-- Settings Card -->
-                        <div class="rounded-xl border border-gray-100 bg-white shadow-sm">
-                            <div class="border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50 p-6">
-                                <div class="flex items-center space-x-3">
-                                    <div
-                                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600 text-white">
-                                        <i class="fas fa-cog"></i>
-                                    </div>
-                                    <div>
-                                        <h2 class="text-lg font-semibold text-gray-900">Pengaturan</h2>
-                                        <p class="text-sm text-gray-600">Posisi dan status banner</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="space-y-6 p-6">
-                                <!-- Position Selection -->
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700">
-                                        Posisi Banner <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="mt-3 space-y-3">
-                                        <label
-                                            class="flex cursor-pointer items-center rounded-lg border-2 p-4 transition hover:border-indigo-500"
-                                            :class="bannerPosition === 'home' ? 'border-indigo-500 bg-indigo-50' :
-                                                'border-gray-200'"
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="position"
-                                                value="home"
-                                                x-model="bannerPosition"
-                                                required
-                                                class="h-5 w-5 border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
-                                            >
-                                            <div class="ml-3">
-                                                <div class="font-semibold text-gray-900">
-                                                    <i class="fas fa-home mr-2 text-indigo-600"></i>
-                                                    Home
-                                                </div>
-                                                <p class="text-sm text-gray-600">Banner utama di halaman beranda</p>
-                                            </div>
-                                        </label>
-
-                                        <label
-                                            class="flex cursor-pointer items-center rounded-lg border-2 p-4 transition hover:border-indigo-500"
-                                            :class="bannerPosition === 'games' ? 'border-indigo-500 bg-indigo-50' :
-                                                'border-gray-200'"
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="position"
-                                                value="games"
-                                                x-model="bannerPosition"
-                                                class="h-5 w-5 border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
-                                            >
-                                            <div class="ml-3">
-                                                <div class="font-semibold text-gray-900">
-                                                    <i class="fas fa-gamepad mr-2 text-green-600"></i>
-                                                    Games
-                                                </div>
-                                                <p class="text-sm text-gray-600">Banner di halaman daftar game</p>
-                                            </div>
-                                        </label>
-
-                                        <label
-                                            class="flex cursor-pointer items-center rounded-lg border-2 p-4 transition hover:border-indigo-500"
-                                            :class="bannerPosition === 'flash-sale' ? 'border-indigo-500 bg-indigo-50' :
-                                                'border-gray-200'"
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="position"
-                                                value="flash-sale"
-                                                x-model="bannerPosition"
-                                                class="h-5 w-5 border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
-                                            >
-                                            <div class="ml-3">
-                                                <div class="font-semibold text-gray-900">
-                                                    <i class="fas fa-bolt mr-2 text-yellow-600"></i>
-                                                    Flash Sale
-                                                </div>
-                                                <p class="text-sm text-gray-600">Banner khusus promosi flash sale</p>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    @error('position')
-                                        <div class="mt-2 flex items-center text-sm text-red-600">
-                                            <i class="fas fa-exclamation-circle mr-1"></i>
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -382,8 +326,8 @@
                                         class="mt-1 h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
                                     >
                                     <div class="flex-1">
-                                        <span class="block font-semibold text-gray-900">Aktifkan Banner</span>
-                                        <span class="text-xs text-gray-600">Banner akan langsung tampil</span>
+                                        <span class="block font-semibold text-gray-900">Aktifkan Game</span>
+                                        <span class="text-xs text-gray-600">Game akan tampil di katalog</span>
                                     </div>
                                 </label>
                             </div>
@@ -398,10 +342,10 @@
                                     ></span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-600">Posisi:</span>
+                                    <span class="text-gray-600">Kategori:</span>
                                     <span
                                         class="capitalize text-gray-900"
-                                        x-text="bannerPosition || '-'"
+                                        x-text="gameCategory || '-'"
                                     ></span>
                                 </div>
                             </div>
@@ -413,13 +357,13 @@
                         <div class="border-b border-gray-100 p-4">
                             <h3 class="font-semibold text-gray-900">
                                 <i class="fas fa-eye mr-2 text-purple-600"></i>
-                                Preview Banner
+                                Preview Game
                             </h3>
                         </div>
                         <div class="p-4">
                             <div class="rounded-lg border-2 border-dashed border-gray-200 p-4">
                                 <div
-                                    class="mb-3 flex aspect-video items-center justify-center rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100">
+                                    class="mb-3 flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100">
                                     <template x-if="imagePreview">
                                         <img
                                             :src="imagePreview"
@@ -428,21 +372,21 @@
                                         >
                                     </template>
                                     <template x-if="!imagePreview">
-                                        <i class="fas fa-image text-4xl text-indigo-300"></i>
+                                        <i class="fas fa-gamepad text-4xl text-indigo-300"></i>
                                     </template>
                                 </div>
                                 <h4
                                     class="mb-2 font-bold text-gray-900"
-                                    x-text="bannerTitle || 'Judul Banner'"
+                                    x-text="gameName || 'Nama Game'"
                                 ></h4>
                                 <p
                                     class="mb-3 line-clamp-2 text-xs text-gray-600"
-                                    x-text="bannerDescription || 'Deskripsi banner akan tampil di sini...'"
+                                    x-text="gameDescription || 'Deskripsi game akan tampil di sini...'"
                                 ></p>
                                 <div class="flex items-center justify-between">
                                     <span
                                         class="text-xs text-gray-500"
-                                        x-text="bannerPosition ? 'Posisi: ' + bannerPosition : 'Pilih posisi'"
+                                        x-text="gameCategory ? 'Kategori: ' + gameCategory : 'Pilih kategori'"
                                     ></span>
                                     <span
                                         class="rounded-full px-2 py-1 text-xs font-semibold"
@@ -458,24 +402,24 @@
                     <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
                         <h3 class="mb-3 flex items-center font-semibold text-blue-900">
                             <i class="fas fa-lightbulb mr-2"></i>
-                            Tips Banner Efektif
+                            Tips Menambah Game
                         </h3>
                         <ul class="space-y-2 text-sm text-blue-800">
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle mr-2 mt-1 text-blue-600"></i>
-                                <span>Gunakan gambar berkualitas tinggi dan menarik</span>
+                                <span>Gunakan nama resmi game</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle mr-2 mt-1 text-blue-600"></i>
-                                <span>Tulis judul yang singkat dan jelas</span>
+                                <span>Upload gambar cover berkualitas tinggi</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle mr-2 mt-1 text-blue-600"></i>
-                                <span>Pastikan ukuran gambar sesuai (1200x400px)</span>
+                                <span>Pilih kategori yang sesuai</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle mr-2 mt-1 text-blue-600"></i>
-                                <span>Gunakan CTA yang menarik untuk link</span>
+                                <span>Tulis deskripsi yang menarik</span>
                             </li>
                         </ul>
                     </div>
@@ -487,10 +431,10 @@
                             class="flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl"
                         >
                             <i class="fas fa-save mr-2"></i>
-                            Simpan Banner
+                            Simpan Game
                         </button>
                         <a
-                            href="{{ route('admin.banners.index') }}"
+                            href="{{ route('admin.games.index') }}"
                             class="flex w-full items-center justify-center rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
                         >
                             <i class="fas fa-times mr-2"></i>
@@ -506,12 +450,12 @@
 
     @push('scripts')
         <script>
-            function bannerForm() {
+            function gameForm() {
                 return {
-                    bannerTitle: '{{ old('title') }}',
-                    bannerDescription: '{{ old('description') }}',
-                    bannerLink: '{{ old('link') }}',
-                    bannerPosition: '{{ old('position', 'home') }}',
+                    gameName: '{{ old('name') }}',
+                    gameCategory: '{{ old('category') }}',
+                    gamePublisher: '{{ old('publisher') }}',
+                    gameDescription: '{{ old('description') }}',
                     isActive: {{ old('is_active', 'true') ? 'true' : 'false' }},
                     imagePreview: null,
                     imageName: '',

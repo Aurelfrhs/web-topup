@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Produk')
-@section('page-title', 'Kelola Produk')
+@section('title', 'Kelola Banner')
+@section('page-title', 'Kelola Banner')
 
 @section('content')
     <div
@@ -12,15 +12,15 @@
         <!-- Header Actions -->
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Daftar Produk</h2>
-                <p class="mt-1 text-sm text-gray-600">Kelola semua produk game yang tersedia</p>
+                <h2 class="text-2xl font-bold text-gray-900">Daftar Banner</h2>
+                <p class="mt-1 text-sm text-gray-600">Kelola banner promosi dan tampilan visual</p>
             </div>
             <a
                 href="{{ route('admin.banners.create') }}"
                 class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl"
             >
                 <i class="fas fa-plus mr-2"></i>
-                Tambah Produk
+                Tambah Banner
             </a>
         </div>
 
@@ -36,25 +36,29 @@
                     <input
                         type="text"
                         name="search"
-                        placeholder="Cari produk berdasarkan nama..."
+                        placeholder="Cari banner berdasarkan judul..."
                         value="{{ request('search') }}"
                         class="w-full rounded-lg border-2 border-gray-200 py-2 pl-11 pr-4 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     >
                 </div>
                 <div class="w-full md:w-56">
                     <select
-                        name="game_id"
+                        name="position"
                         class="w-full rounded-lg border-2 border-gray-200 px-4 py-2 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     >
-                        <option value="">🎮 Semua Game</option>
-                        @foreach (\App\Models\Game::where('is_active', true)->get() as $game)
-                            <option
-                                value="{{ $game->id }}"
-                                {{ request('game_id') == $game->id ? 'selected' : '' }}
-                            >
-                                {{ $game->name }}
-                            </option>
-                        @endforeach
+                        <option value="">📍 Semua Posisi</option>
+                        <option
+                            value="home"
+                            {{ request('position') == 'home' ? 'selected' : '' }}
+                        >Home</option>
+                        <option
+                            value="games"
+                            {{ request('position') == 'games' ? 'selected' : '' }}
+                        >Games</option>
+                        <option
+                            value="flash-sale"
+                            {{ request('position') == 'flash-sale' ? 'selected' : '' }}
+                        >Flash Sale</option>
                     </select>
                 </div>
                 <button
@@ -66,155 +70,123 @@
             </form>
         </div>
 
-        <!-- banners Table -->
-        <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-600">
-                                ID
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-600">
-                                Game
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-600">
-                                Nama Produk
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-600">
-                                Harga
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-600">
-                                Stok
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-600">
-                                Status
-                            </th>
-                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-gray-600">
-                                Aksi
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white">
-                        @forelse($banners as $banner)
-                            <tr class="transition hover:bg-gray-50">
-                                <td class="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">
-                                    #{{ $banner->id }}
-                                </td>
-                                <td class="whitespace-nowrap px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
-                                            <i class="fas fa-gamepad"></i>
-                                        </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-semibold text-gray-900">
-                                                {{ $banner->game->name ?? 'N/A' }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-sm font-semibold text-gray-900">{{ $banner->name }}</div>
-                                    @if ($banner->description)
-                                        <div class="text-sm text-gray-500">{{ Str::limit($banner->description, 50) }}</div>
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-6 py-4">
-                                    <div class="text-sm font-bold text-indigo-600">
-                                        Rp {{ number_format($banner->price, 0, ',', '.') }}
-                                    </div>
-                                </td>
-                                <td class="whitespace-nowrap px-6 py-4">
-                                    @if ($banner->stock)
-                                        <span
-                                            class="{{ $banner->stock < 10 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }} inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                                        >
-                                            <i class="fas fa-box mr-1"></i>
-                                            {{ $banner->stock }}
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
-                                        >
-                                            <i class="fas fa-infinity mr-1"></i>
-                                            Unlimited
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-6 py-4">
-                                    @if ($banner->is_active)
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800"
-                                        >
-                                            <span class="mr-1 h-2 w-2 rounded-full bg-green-500"></span>
-                                            Aktif
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-800"
-                                        >
-                                            <span class="mr-1 h-2 w-2 rounded-full bg-gray-500"></span>
-                                            Nonaktif
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <a
-                                            href="{{ route('admin.banners.edit', $banner->id) }}"
-                                            class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 transition hover:bg-indigo-200"
-                                            title="Edit"
-                                        >
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button
-                                            @click="confirmDelete({{ $banner->id }}, '{{ $banner->name }}')"
-                                            class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-red-100 text-red-600 transition hover:bg-red-200"
-                                            title="Hapus"
-                                        >
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td
-                                    colspan="7"
-                                    class="px-6 py-16 text-center"
-                                >
-                                    <div class="flex flex-col items-center justify-center">
-                                        <div
-                                            class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
-                                            <i class="fas fa-box-open text-3xl text-gray-300"></i>
-                                        </div>
-                                        <h3 class="mb-2 text-lg font-semibold text-gray-900">Belum ada produk</h3>
-                                        <p class="mb-4 text-sm text-gray-500">Mulai tambahkan produk untuk menjual game</p>
-                                        <a
-                                            href="{{ route('admin.banners.create') }}"
-                                            class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                                        >
-                                            <i class="fas fa-plus mr-2"></i>
-                                            Tambah Produk Pertama
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+        <!-- Banners Grid -->
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @forelse($banners as $banner)
+                <div
+                    class="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition hover:shadow-lg">
+                    <!-- Banner Image -->
+                    <div class="relative aspect-video overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100">
+                        @if ($banner->image)
+                            <img
+                                src="{{ asset('storage/' . $banner->image) }}"
+                                alt="{{ $banner->title }}"
+                                class="h-full w-full object-cover transition group-hover:scale-105"
+                            >
+                        @else
+                            <div class="flex h-full items-center justify-center">
+                                <i class="fas fa-image text-5xl text-indigo-300"></i>
+                            </div>
+                        @endif
 
-            <!-- Pagination -->
-            @if ($banners->hasPages())
-                <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-                    {{ $banners->links() }}
+                        <!-- Position Badge -->
+                        <div class="absolute left-3 top-3">
+                            <span
+                                class="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-gray-900 shadow backdrop-blur"
+                            >
+                                {{ ucfirst($banner->position) }}
+                            </span>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div class="absolute right-3 top-3">
+                            @if ($banner->is_active)
+                                <span
+                                    class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800"
+                                >
+                                    <span class="mr-1 h-2 w-2 rounded-full bg-green-500"></span>
+                                    Aktif
+                                </span>
+                            @else
+                                <span
+                                    class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-800"
+                                >
+                                    <span class="mr-1 h-2 w-2 rounded-full bg-gray-500"></span>
+                                    Nonaktif
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Banner Info -->
+                    <div class="p-4">
+                        <h3 class="mb-2 font-bold text-gray-900">{{ $banner->title }}</h3>
+                        @if ($banner->description)
+                            <p class="mb-3 line-clamp-2 text-sm text-gray-600">{{ $banner->description }}</p>
+                        @endif
+
+                        @if ($banner->link)
+                            <div class="mb-3 flex items-center text-xs text-indigo-600">
+                                <i class="fas fa-link mr-1"></i>
+                                <span class="truncate">{{ Str::limit($banner->link, 30) }}</span>
+                            </div>
+                        @endif
+
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>
+                                <i class="fas fa-calendar mr-1"></i>
+                                {{ $banner->created_at->format('d M Y') }}
+                            </span>
+                            <span>#{{ $banner->id }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex border-t border-gray-100 bg-gray-50">
+                        <a
+                            href="{{ route('admin.banners.edit', $banner->id) }}"
+                            class="flex flex-1 items-center justify-center py-3 font-semibold text-indigo-600 transition hover:bg-indigo-50"
+                        >
+                            <i class="fas fa-edit mr-2"></i>
+                            Edit
+                        </a>
+                        <button
+                            @click="confirmDelete({{ $banner->id }}, '{{ $banner->title }}')"
+                            class="flex flex-1 items-center justify-center border-l border-gray-100 py-3 font-semibold text-red-600 transition hover:bg-red-50"
+                        >
+                            <i class="fas fa-trash mr-2"></i>
+                            Hapus
+                        </button>
+                    </div>
                 </div>
-            @endif
+            @empty
+                <div class="col-span-full rounded-xl border border-gray-100 bg-white p-16 text-center shadow-sm">
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+                            <i class="fas fa-images text-3xl text-gray-300"></i>
+                        </div>
+                        <h3 class="mb-2 text-lg font-semibold text-gray-900">Belum ada banner</h3>
+                        <p class="mb-4 text-sm text-gray-500">Mulai tambahkan banner untuk promosi</p>
+                        <a
+                            href="{{ route('admin.banners.create') }}"
+                            class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                        >
+                            <i class="fas fa-plus mr-2"></i>
+                            Tambah Banner Pertama
+                        </a>
+                    </div>
+                </div>
+            @endforelse
         </div>
 
-        <!-- Modern Delete Confirmation Modal -->
+        <!-- Pagination -->
+        @if ($banners->hasPages())
+            <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                {{ $banners->links() }}
+            </div>
+        @endif
+
+        <!-- Delete Confirmation Modal -->
         <div
             x-show="deleteModal.open"
             x-cloak
@@ -253,42 +225,13 @@
                 <!-- Body -->
                 <div class="p-6">
                     <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
-                        <p class="mb-3 text-gray-900">
-                            Anda akan menghapus produk:
-                        </p>
+                        <p class="mb-3 text-gray-900">Anda akan menghapus banner:</p>
                         <div class="rounded-lg border border-red-200 bg-white p-3">
                             <p
                                 class="font-bold text-gray-900"
-                                x-text="deleteModal.bannerName"
+                                x-text="deleteModal.bannerTitle"
                             ></p>
                             <p class="text-sm text-gray-600">ID: #<span x-text="deleteModal.bannerId"></span></p>
-                        </div>
-                    </div>
-
-                    <div class="mb-6 space-y-3">
-                        <p class="font-semibold text-gray-900">Yang akan terhapus:</p>
-                        <div class="space-y-2">
-                            <div class="flex items-start rounded-lg bg-gray-50 p-3">
-                                <i class="fas fa-times-circle mr-3 mt-0.5 text-red-600"></i>
-                                <div>
-                                    <p class="font-medium text-gray-900">Data Produk</p>
-                                    <p class="text-sm text-gray-600">Semua informasi produk akan hilang</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start rounded-lg bg-gray-50 p-3">
-                                <i class="fas fa-times-circle mr-3 mt-0.5 text-red-600"></i>
-                                <div>
-                                    <p class="font-medium text-gray-900">Riwayat Transaksi</p>
-                                    <p class="text-sm text-gray-600">History terkait produk ini</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start rounded-lg bg-gray-50 p-3">
-                                <i class="fas fa-times-circle mr-3 mt-0.5 text-red-600"></i>
-                                <div>
-                                    <p class="font-medium text-gray-900">Media & Gambar</p>
-                                    <p class="text-sm text-gray-600">File terkait akan dihapus</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -296,9 +239,8 @@
                         <div class="flex">
                             <i class="fas fa-lightbulb mr-3 mt-0.5 text-yellow-600"></i>
                             <div>
-                                <p class="font-semibold text-yellow-900">Saran</p>
-                                <p class="text-sm text-yellow-800">Pertimbangkan menonaktifkan produk daripada menghapusnya
-                                </p>
+                                <p class="font-semibold text-yellow-900">Perhatian</p>
+                                <p class="text-sm text-yellow-800">Banner dan gambar terkait akan dihapus permanen</p>
                             </div>
                         </div>
                     </div>
@@ -343,12 +285,12 @@
                     deleteModal: {
                         open: false,
                         bannerId: null,
-                        bannerName: ''
+                        bannerTitle: ''
                     },
 
-                    confirmDelete(bannerId, bannerName) {
+                    confirmDelete(bannerId, bannerTitle) {
                         this.deleteModal.bannerId = bannerId;
-                        this.deleteModal.bannerName = bannerName;
+                        this.deleteModal.bannerTitle = bannerTitle;
                         this.deleteModal.open = true;
                     },
 

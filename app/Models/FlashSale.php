@@ -11,15 +11,23 @@ class FlashSale extends Model
 
     protected $fillable = [
         'product_id',
-        'discount_percent',
+        'original_price',
+        'discounted_price',
+        'discount_percentage',
+        'stock',
+        'sold',
         'start_time',
         'end_time',
-        'status',
+        'is_active',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
+        'original_price' => 'decimal:2',
+        'discounted_price' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
+        'is_active' => 'boolean',
     ];
 
     // Relationships
@@ -31,14 +39,14 @@ class FlashSale extends Model
     // Scopes
     public function scopeActive($query)
     {
-        return $query->where('status', 'active')
+        return $query->where('is_active', true)
             ->where('start_time', '<=', now())
             ->where('end_time', '>=', now());
     }
 
     public function scopeUpcoming($query)
     {
-        return $query->where('status', 'active')
+        return $query->where('is_active', true)
             ->where('start_time', '>', now());
     }
 
@@ -48,27 +56,20 @@ class FlashSale extends Model
     }
 
     // Accessors
-    public function getDiscountedPriceAttribute()
-    {
-        if ($this->product) {
-            $discount = ($this->product->price * $this->discount_percent) / 100;
-            return $this->product->price - $discount;
-        }
-        return 0;
-    }
-
     public function getDiscountAmountAttribute()
     {
-        if ($this->product) {
-            return ($this->product->price * $this->discount_percent) / 100;
-        }
-        return 0;
+        return $this->original_price - $this->discounted_price;
+    }
+
+    public function getSavingsAttribute()
+    {
+        return $this->discount_amount;
     }
 
     // Helper Methods
     public function isActive()
     {
-        return $this->status === 'active'
+        return $this->is_active
             && $this->start_time <= now()
             && $this->end_time >= now();
     }
@@ -80,6 +81,18 @@ class FlashSale extends Model
 
     public function isUpcoming()
     {
-        return $this->start_time > now();
+        return $this->start_time > now() && $this->is_active;
+    }
+
+    public function getRemainingStockAttribute()
+    {
+        return max(0, $this->stock - $this->sold);
+    }
+
+    public function getStockPercentageAttribute()
+    {
+        if ($this->stock <= 0)
+            return 0;
+        return ($this->remaining_stock / $this->stock) * 100;
     }
 }
