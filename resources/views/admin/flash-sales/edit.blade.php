@@ -49,7 +49,7 @@
                     class="inline-flex items-center justify-center rounded-lg border-2 border-white bg-white/10 px-6 py-3 font-semibold backdrop-blur transition hover:bg-white/20"
                 >
                     <i class="fas fa-arrow-left mr-2"></i>
-                    Kembali ke Daftar
+                    Kembali
                 </a>
             </div>
         </div>
@@ -80,13 +80,34 @@
                         </div>
 
                         <div class="space-y-6 p-6">
+                            <!-- Current Product Info -->
+                            <div class="rounded-xl border-2 border-red-200 bg-gradient-to-r from-red-50 to-pink-50 p-4">
+                                <div class="mb-2 flex items-center">
+                                    <span class="rounded-full bg-red-500 px-2 py-1 text-xs font-bold text-white">PRODUK SAAT
+                                        INI</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="mb-1 text-lg font-bold text-gray-900">{{ $flashSale->product->name }}</p>
+                                        <p class="text-sm text-gray-600">{{ $flashSale->product->game->name ?? 'N/A' }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="mb-1 text-sm text-gray-600">Harga Normal</p>
+                                        <p class="text-xl font-bold text-gray-900">
+                                            Rp {{ number_format($flashSale->product->price, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Product Selection -->
                             <div>
                                 <label
                                     for="product_id"
                                     class="mb-2 block text-sm font-semibold text-gray-700"
                                 >
-                                    Produk <span class="text-red-500">*</span>
+                                    Pilih Produk Baru <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <select
@@ -122,25 +143,10 @@
                                         {{ $message }}
                                     </p>
                                 @enderror
-
-                                <!-- Current Product Info -->
-                                <div
-                                    class="mt-3 rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 p-4">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="mb-1 text-sm text-gray-600">Produk Saat Ini</p>
-                                            <p class="font-bold text-gray-900">{{ $flashSale->product->name }}</p>
-                                            <p class="text-sm text-gray-500">{{ $flashSale->product->game->name ?? 'N/A' }}
-                                            </p>
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="mb-1 text-sm text-gray-600">Harga Normal</p>
-                                            <p class="text-lg font-bold text-gray-900">
-                                                Rp {{ number_format($flashSale->product->price, 0, ',', '.') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p class="mt-2 text-xs text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Pilih produk yang sama untuk hanya mengubah pengaturan lainnya
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -160,141 +166,168 @@
 
                         <div class="space-y-6 p-6">
                             <!-- Current Stats -->
-                            <div class="rounded-xl border border-gray-200 bg-gradient-to-r from-red-50 to-pink-50 p-4">
-                                <div class="grid grid-cols-3 gap-4 text-center">
-                                    <div>
-                                        <p class="mb-1 text-sm text-gray-600">Diskon Saat Ini</p>
+                            <div class="rounded-xl border border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
+                                <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-600">DATA SAAT INI
+                                </p>
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                    <div class="text-center">
+                                        <div
+                                            class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                                            <i class="fas fa-tag text-red-600"></i>
+                                        </div>
                                         <p class="text-2xl font-bold text-red-600">{{ $flashSale->discount_percentage }}%
                                         </p>
+                                        <p class="text-xs text-gray-600">Diskon</p>
                                     </div>
-                                    <div>
-                                        <p class="mb-1 text-sm text-gray-600">Harga Flash Sale</p>
+                                    <div class="text-center">
+                                        <div
+                                            class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                                            <i class="fas fa-dollar-sign text-green-600"></i>
+                                        </div>
                                         <p class="text-lg font-bold text-green-600">
                                             Rp {{ number_format($flashSale->discounted_price, 0, ',', '.') }}
                                         </p>
+                                        <p class="text-xs text-gray-600">Harga Flash Sale</p>
                                     </div>
-                                    <div>
-                                        <p class="mb-1 text-sm text-gray-600">Stok Saat Ini</p>
+                                    <div class="text-center">
+                                        <div
+                                            class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                                            <i class="fas fa-boxes text-blue-600"></i>
+                                        </div>
                                         <p class="text-lg font-bold text-blue-600">{{ $flashSale->stock }} Unit</p>
+                                        <p class="text-xs text-gray-600">Stok Tersedia</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- New Discount -->
-                            <div>
-                                <label
-                                    for="discount_percentage"
-                                    class="mb-2 block text-sm font-semibold text-gray-700"
-                                >
-                                    Persentase Diskon Baru <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input
-                                        type="number"
-                                        id="discount_percentage"
-                                        name="discount_percentage"
-                                        value="{{ old('discount_percentage', $flashSale->discount_percentage) }}"
-                                        required
-                                        min="1"
-                                        max="99"
-                                        x-model="form.discount_percentage"
-                                        @input="calculateDiscount()"
-                                        placeholder="0"
-                                        class="@error('discount_percentage') border-red-300 @enderror w-full rounded-lg border-2 border-gray-200 py-3 pl-4 pr-12 text-lg font-bold transition placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-50"
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <!-- New Discount -->
+                                <div>
+                                    <label
+                                        for="discount_percentage"
+                                        class="mb-2 block text-sm font-semibold text-gray-700"
                                     >
-                                    <span
-                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-bold text-gray-600">%</span>
+                                        Persentase Diskon <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input
+                                            type="number"
+                                            id="discount_percentage"
+                                            name="discount_percentage"
+                                            value="{{ old('discount_percentage', $flashSale->discount_percentage) }}"
+                                            required
+                                            min="1"
+                                            max="99"
+                                            x-model="form.discount_percentage"
+                                            @input="calculateDiscount()"
+                                            placeholder="0"
+                                            class="@error('discount_percentage') border-red-300 @enderror w-full rounded-lg border-2 border-gray-200 py-3 pl-4 pr-12 text-lg font-bold transition placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-50"
+                                        >
+                                        <span
+                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-bold text-gray-600"
+                                        >%</span>
+                                    </div>
+                                    @error('discount_percentage')
+                                        <p class="mt-2 flex items-center text-sm text-red-600">
+                                            <i class="fas fa-exclamation-circle mr-1"></i>
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
                                 </div>
-                                @error('discount_percentage')
-                                    <p class="mt-2 flex items-center text-sm text-red-600">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
 
-                                <!-- Discount Change Indicator -->
-                                <div
-                                    x-show="discountChange.changed"
-                                    class="mt-3"
-                                >
-                                    <div
-                                        class="rounded-lg border p-4"
-                                        :class="discountChange.increased ? 'bg-green-50 border-green-200' :
-                                            'bg-red-50 border-red-200'"
+                                <!-- Stock -->
+                                <div>
+                                    <label
+                                        for="stock"
+                                        class="mb-2 block text-sm font-semibold text-gray-700"
                                     >
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <div
-                                                    class="flex h-10 w-10 items-center justify-center rounded-full"
-                                                    :class="discountChange.increased ? 'bg-green-100' : 'bg-red-100'"
-                                                >
-                                                    <i
-                                                        class="fas text-lg"
-                                                        :class="discountChange.increased ? 'fa-arrow-up text-green-600' :
-                                                            'fa-arrow-down text-red-600'"
-                                                    ></i>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <p
-                                                        class="font-semibold"
-                                                        :class="discountChange.increased ? 'text-green-900' : 'text-red-900'"
-                                                        x-text="discountChange.increased ? 'Diskon Ditingkatkan' : 'Diskon Dikurangi'"
-                                                    >
-                                                    </p>
-                                                    <p
-                                                        class="text-sm"
-                                                        :class="discountChange.increased ? 'text-green-700' : 'text-red-700'"
-                                                        x-text="Math.abs(discountChange.amount) + '%'"
-                                                    ></p>
-                                                </div>
+                                        Stok Flash Sale <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input
+                                            type="number"
+                                            id="stock"
+                                            name="stock"
+                                            value="{{ old('stock', $flashSale->stock) }}"
+                                            required
+                                            min="1"
+                                            placeholder="0"
+                                            class="@error('stock') border-red-300 @enderror w-full rounded-lg border-2 border-gray-200 py-3 pl-4 pr-16 text-lg font-bold transition placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-50"
+                                        >
+                                        <span
+                                            class="absolute right-4 top-1/2 -translate-y-1/2 font-semibold text-gray-600">Unit</span>
+                                    </div>
+                                    @error('stock')
+                                        <p class="mt-2 flex items-center text-sm text-red-600">
+                                            <i class="fas fa-exclamation-circle mr-1"></i>
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
+                                    <div class="mt-2 flex items-center justify-between text-xs">
+                                        <span class="text-gray-500">
+                                            <i class="fas fa-shopping-cart mr-1"></i>
+                                            Terjual: <span
+                                                class="font-semibold text-gray-900">{{ $flashSale->sold }}</span>
+                                        </span>
+                                        <span class="text-gray-500">
+                                            Sisa: <span
+                                                class="font-semibold text-blue-600">{{ $flashSale->stock - $flashSale->sold }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Discount Change Indicator -->
+                            <div
+                                x-show="discountChange.changed"
+                                class="mt-4"
+                            >
+                                <div
+                                    class="rounded-xl border-2 p-4"
+                                    :class="discountChange.increased ?
+                                        'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300' :
+                                        'bg-gradient-to-br from-red-50 to-pink-50 border-red-300'"
+                                >
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div
+                                                class="flex h-12 w-12 items-center justify-center rounded-full"
+                                                :class="discountChange.increased ? 'bg-green-500' : 'bg-red-500'"
+                                            >
+                                                <i
+                                                    class="fas text-xl text-white"
+                                                    :class="discountChange.increased ? 'fa-arrow-up' :
+                                                        'fa-arrow-down'"
+                                                ></i>
                                             </div>
-                                            <div class="text-right">
-                                                <p class="text-sm font-medium text-gray-600">Harga Baru</p>
+                                            <div class="ml-4">
                                                 <p
-                                                    class="text-xl font-bold"
+                                                    class="font-bold"
                                                     :class="discountChange.increased ? 'text-green-900' : 'text-red-900'"
-                                                    x-text="formatCurrency(form.discountedPrice)"
-                                                ></p>
+                                                    x-text="discountChange.increased ? 'Diskon Ditingkatkan!' : 'Diskon Dikurangi'"
+                                                >
+                                                </p>
+                                                <p
+                                                    class="text-sm"
+                                                    :class="discountChange.increased ? 'text-green-700' : 'text-red-700'"
+                                                    x-text="(discountChange.increased ? '+' : '') + discountChange.amount + '% dari sebelumnya'"
+                                                >
+                                                </p>
                                             </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium text-gray-600">Harga Baru</p>
+                                            <p
+                                                class="text-2xl font-bold"
+                                                :class="discountChange.increased ? 'text-green-900' : 'text-red-900'"
+                                                x-text="formatCurrency(form.discountedPrice)"
+                                            ></p>
+                                            <p class="text-xs text-gray-500">
+                                                Hemat <span x-text="formatCurrency(form.discountAmount)"></span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Stock -->
-                            <div>
-                                <label
-                                    for="stock"
-                                    class="mb-2 block text-sm font-semibold text-gray-700"
-                                >
-                                    Stok Flash Sale <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input
-                                        type="number"
-                                        id="stock"
-                                        name="stock"
-                                        value="{{ old('stock', $flashSale->stock) }}"
-                                        required
-                                        min="1"
-                                        placeholder="0"
-                                        class="@error('stock') border-red-300 @enderror w-full rounded-lg border-2 border-gray-200 py-3 pl-4 pr-16 text-lg font-bold transition placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-50"
-                                    >
-                                    <span
-                                        class="absolute right-4 top-1/2 -translate-y-1/2 font-semibold text-gray-600">Unit</span>
-                                </div>
-                                @error('stock')
-                                    <p class="mt-2 flex items-center text-sm text-red-600">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                                <p class="mt-2 text-xs text-gray-500">
-                                    <i class="fas fa-info-circle mr-1"></i>
-                                    Terjual: <span class="font-semibold">{{ $flashSale->sold }}</span> dari <span
-                                        class="font-semibold"
-                                    >{{ $flashSale->stock }}</span> unit
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -315,17 +348,31 @@
                         <div class="space-y-6 p-6">
                             <!-- Current Schedule -->
                             <div class="rounded-xl border border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
-                                <div class="grid grid-cols-2 gap-4">
+                                <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-600">JADWAL SAAT INI
+                                </p>
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div>
-                                        <p class="mb-1 text-sm text-gray-600">Mulai Saat Ini</p>
-                                        <p class="font-bold text-gray-900">
-                                            {{ $flashSale->start_time->format('d M Y, H:i') }}
+                                        <div class="mb-2 flex items-center text-sm text-gray-600">
+                                            <i class="fas fa-play-circle mr-2"></i>
+                                            Waktu Mulai
+                                        </div>
+                                        <p class="text-lg font-bold text-gray-900">
+                                            {{ $flashSale->start_time->format('d M Y') }}
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            {{ $flashSale->start_time->format('H:i') }} WIB
                                         </p>
                                     </div>
                                     <div>
-                                        <p class="mb-1 text-sm text-gray-600">Berakhir Saat Ini</p>
-                                        <p class="font-bold text-gray-900">
-                                            {{ $flashSale->end_time->format('d M Y, H:i') }}
+                                        <div class="mb-2 flex items-center text-sm text-gray-600">
+                                            <i class="fas fa-stop-circle mr-2"></i>
+                                            Waktu Berakhir
+                                        </div>
+                                        <p class="text-lg font-bold text-gray-900">
+                                            {{ $flashSale->end_time->format('d M Y') }}
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            {{ $flashSale->end_time->format('H:i') }} WIB
                                         </p>
                                     </div>
                                 </div>
@@ -338,7 +385,7 @@
                                         for="start_time"
                                         class="mb-2 block text-sm font-semibold text-gray-700"
                                     >
-                                        Waktu Mulai Baru <span class="text-red-500">*</span>
+                                        Waktu Mulai <span class="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="datetime-local"
@@ -363,7 +410,7 @@
                                         for="end_time"
                                         class="mb-2 block text-sm font-semibold text-gray-700"
                                     >
-                                        Waktu Berakhir Baru <span class="text-red-500">*</span>
+                                        Waktu Berakhir <span class="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="datetime-local"
@@ -386,14 +433,16 @@
                             <!-- Duration Info -->
                             <div
                                 x-show="form.start_time && form.end_time"
-                                class="rounded-lg border border-blue-200 bg-blue-50 p-4"
+                                class="rounded-xl border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 p-4"
                             >
                                 <div class="flex items-center">
-                                    <i class="fas fa-info-circle mr-3 text-blue-600"></i>
-                                    <div>
-                                        <p class="font-semibold text-blue-900">Durasi Flash Sale</p>
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-500">
+                                        <i class="fas fa-hourglass-half text-white"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="font-bold text-purple-900">Durasi Flash Sale</p>
                                         <p
-                                            class="text-sm text-blue-700"
+                                            class="text-lg font-bold text-purple-600"
                                             x-text="calculateDuration()"
                                         ></p>
                                     </div>
@@ -404,55 +453,64 @@
 
                     <!-- Change Summary -->
                     <div
-                        class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+                        class="overflow-hidden rounded-xl border border-yellow-200 bg-white shadow-sm"
                         x-show="hasChanges()"
                     >
-                        <div class="border-b border-gray-100 bg-gradient-to-r from-yellow-50 to-orange-50 px-6 py-4">
+                        <div class="border-b border-yellow-200 bg-gradient-to-r from-yellow-50 to-orange-50 px-6 py-4">
                             <h2 class="flex items-center text-lg font-semibold text-gray-900">
                                 <span
                                     class="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500 text-white"
                                 >
-                                    <i class="fas fa-edit text-sm"></i>
+                                    <i class="fas fa-exclamation-triangle text-sm"></i>
                                 </span>
                                 Ringkasan Perubahan
                             </h2>
                         </div>
                         <div class="p-6">
-                            <div class="space-y-2">
+                            <div class="space-y-3">
                                 <div
                                     x-show="form.product_id != '{{ $flashSale->product_id }}'"
-                                    class="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 px-4 py-3"
+                                    class="flex items-center justify-between rounded-lg border-2 border-blue-200 bg-blue-50 px-4 py-3"
                                 >
-                                    <span class="font-medium text-blue-900"><i class="fas fa-box mr-2"></i>Produk</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-box mr-3 text-blue-600"></i>
+                                        <span class="font-semibold text-blue-900">Produk</span>
+                                    </div>
                                     <span
-                                        class="rounded-full bg-blue-200 px-3 py-1 text-xs font-bold text-blue-900">DIUBAH</span>
+                                        class="rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white">DIUBAH</span>
                                 </div>
                                 <div
                                     x-show="discountChange.changed"
-                                    class="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50 px-4 py-3"
+                                    class="flex items-center justify-between rounded-lg border-2 border-orange-200 bg-orange-50 px-4 py-3"
                                 >
-                                    <span class="font-medium text-orange-900"><i
-                                            class="fas fa-percent mr-2"></i>Persentase Diskon</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-percent mr-3 text-orange-600"></i>
+                                        <span class="font-semibold text-orange-900">Persentase Diskon</span>
+                                    </div>
                                     <span
-                                        class="rounded-full bg-orange-200 px-3 py-1 text-xs font-bold text-orange-900">DIUBAH</span>
+                                        class="rounded-full bg-orange-600 px-3 py-1 text-xs font-bold text-white">DIUBAH</span>
                                 </div>
                                 <div
                                     x-show="form.start_time !== '{{ $flashSale->start_time->format('Y-m-d\TH:i') }}'"
-                                    class="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-3"
+                                    class="flex items-center justify-between rounded-lg border-2 border-green-200 bg-green-50 px-4 py-3"
                                 >
-                                    <span class="font-medium text-green-900"><i class="fas fa-clock mr-2"></i>Waktu
-                                        Mulai</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-play-circle mr-3 text-green-600"></i>
+                                        <span class="font-semibold text-green-900">Waktu Mulai</span>
+                                    </div>
                                     <span
-                                        class="rounded-full bg-green-200 px-3 py-1 text-xs font-bold text-green-900">DIUBAH</span>
+                                        class="rounded-full bg-green-600 px-3 py-1 text-xs font-bold text-white">DIUBAH</span>
                                 </div>
                                 <div
                                     x-show="form.end_time !== '{{ $flashSale->end_time->format('Y-m-d\TH:i') }}'"
-                                    class="flex items-center justify-between rounded-lg border border-purple-200 bg-purple-50 px-4 py-3"
+                                    class="flex items-center justify-between rounded-lg border-2 border-purple-200 bg-purple-50 px-4 py-3"
                                 >
-                                    <span class="font-medium text-purple-900"><i class="fas fa-clock mr-2"></i>Waktu
-                                        Berakhir</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-stop-circle mr-3 text-purple-600"></i>
+                                        <span class="font-semibold text-purple-900">Waktu Berakhir</span>
+                                    </div>
                                     <span
-                                        class="rounded-full bg-purple-200 px-3 py-1 text-xs font-bold text-purple-900">DIUBAH</span>
+                                        class="rounded-full bg-purple-600 px-3 py-1 text-xs font-bold text-white">DIUBAH</span>
                                 </div>
                             </div>
                         </div>
@@ -475,8 +533,8 @@
                             <div
                                 class="rounded-xl border-2 p-4"
                                 :class="form.status === 'active' ?
-                                    'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200' :
-                                    'bg-gradient-to-br from-gray-50 to-slate-50 border-gray-200'"
+                                    'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300' :
+                                    'bg-gradient-to-br from-gray-50 to-slate-50 border-gray-300'"
                             >
                                 <label class="flex cursor-pointer items-start">
                                     <input
@@ -494,20 +552,20 @@
                                 </label>
                             </div>
 
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center justify-between rounded bg-gray-50 p-2">
-                                    <span class="text-gray-600">Status:</span>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+                                    <span class="text-sm font-medium text-gray-600">Status:</span>
                                     <span
                                         class="rounded-full px-3 py-1 text-xs font-bold"
-                                        :class="form.status === 'active' ? 'bg-green-100 text-green-800' :
-                                            'bg-gray-200 text-gray-800'"
+                                        :class="form.status === 'active' ? 'bg-green-500 text-white' :
+                                            'bg-gray-400 text-white'"
                                         x-text="form.status === 'active' ? 'AKTIF' : 'NONAKTIF'"
                                     ></span>
                                 </div>
-                                <div class="flex items-center justify-between rounded bg-gray-50 p-2">
-                                    <span class="text-gray-600">Kondisi:</span>
+                                <div class="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+                                    <span class="text-sm font-medium text-gray-600">Kondisi:</span>
                                     <span
-                                        class="font-semibold text-gray-900"
+                                        class="font-bold text-gray-900"
                                         x-text="getStatusText()"
                                     ></span>
                                 </div>
@@ -516,13 +574,13 @@
                             <!-- Warning if deactivating -->
                             <div
                                 x-show="form.status !== 'active' && '{{ $flashSale->status }}' == 'active'"
-                                class="rounded-lg border border-yellow-200 bg-yellow-50 p-3"
+                                class="rounded-lg border-2 border-yellow-300 bg-yellow-50 p-4"
                             >
                                 <div class="flex">
-                                    <i class="fas fa-exclamation-triangle mr-2 mt-0.5 text-yellow-600"></i>
+                                    <i class="fas fa-exclamation-triangle mr-3 mt-0.5 text-yellow-600"></i>
                                     <div>
-                                        <p class="text-sm font-semibold text-yellow-900">Flash Sale akan dinonaktifkan</p>
-                                        <p class="mt-1 text-xs text-yellow-700">Flash sale tidak akan berjalan setelah
+                                        <p class="font-bold text-yellow-900">Peringatan!</p>
+                                        <p class="mt-1 text-sm text-yellow-800">Flash sale akan dinonaktifkan setelah
                                             disimpan</p>
                                     </div>
                                 </div>
@@ -540,20 +598,23 @@
                         </div>
                         <div class="p-6">
                             <div
-                                class="overflow-hidden rounded-xl border-2 border-gray-200 bg-white shadow-sm transition hover:shadow-md">
-                                <div class="bg-gradient-to-br from-red-500 to-pink-500 p-3">
+                                class="overflow-hidden rounded-xl border-2 border-gray-200 bg-white shadow-lg transition hover:shadow-xl">
+                                <div class="bg-gradient-to-br from-red-500 to-pink-500 p-4">
                                     <div class="flex items-center justify-between text-white">
-                                        <span class="text-xs font-semibold">FLASH SALE</span>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-bolt mr-2"></i>
+                                            <span class="text-sm font-bold">FLASH SALE</span>
+                                        </div>
                                         <span
-                                            class="rounded bg-white/20 px-2 py-1 text-xs font-bold backdrop-blur"
-                                            x-text="form.discount_percentage + '%'"
+                                            class="rounded-full bg-white/30 px-3 py-1 text-sm font-bold backdrop-blur"
+                                            x-text="form.discount_percentage + '% OFF'"
                                         ></span>
                                     </div>
                                 </div>
                                 <div class="p-4">
-                                    <div class="mb-2 flex items-start justify-between">
+                                    <div class="mb-3 flex items-start justify-between">
                                         <h4
-                                            class="line-clamp-2 flex-1 font-bold text-gray-900"
+                                            class="line-clamp-2 flex-1 text-lg font-bold text-gray-900"
                                             x-text="productInfo.name"
                                         ></h4>
                                         <span
@@ -564,31 +625,35 @@
                                         ></span>
                                     </div>
                                     <p
-                                        class="mb-3 text-sm text-gray-600"
+                                        class="mb-4 text-sm text-gray-600"
                                         x-text="productInfo.game"
                                     ></p>
-                                    <div class="mb-3 flex items-center gap-2">
+                                    <div class="mb-4 flex items-baseline gap-2">
                                         <span
                                             class="text-sm text-gray-500 line-through"
                                             x-text="formatCurrency(productInfo.price)"
                                         ></span>
                                         <span
-                                            class="text-lg font-bold text-red-600"
+                                            class="text-2xl font-bold text-red-600"
                                             x-text="formatCurrency(form.discountedPrice)"
                                         ></span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
                                         <span x-show="form.start_time">
-                                            <i class="fas fa-clock mr-1"></i>
+                                            <i class="fas fa-calendar mr-1"></i>
                                             <span x-text="formatDate(form.start_time)"></span>
                                         </span>
-                                        <span class="font-semibold text-red-600">
+                                        <span class="font-bold text-green-600">
                                             Hemat <span x-text="formatCurrency(form.discountAmount)"></span>
                                         </span>
                                     </div>
                                 </div>
                             </div>
+                            <p class="mt-3 text-center text-xs text-gray-500">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Preview tampilan di website
+                            </p>
                         </div>
                     </div>
 
@@ -621,30 +686,60 @@
                         <div class="space-y-3 p-6">
                             <div class="flex items-center justify-between rounded-lg bg-blue-50 p-3">
                                 <div class="flex items-center">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                                        <i class="fas fa-shopping-cart text-blue-600"></i>
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500">
+                                        <i class="fas fa-shopping-cart text-white"></i>
                                     </div>
                                     <span class="ml-3 font-medium text-gray-700">Terjual</span>
                                 </div>
-                                <span class="text-xl font-bold text-blue-600">0</span>
+                                <span class="text-xl font-bold text-blue-600">{{ $flashSale->sold }}</span>
                             </div>
                             <div class="flex items-center justify-between rounded-lg bg-green-50 p-3">
                                 <div class="flex items-center">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-                                        <i class="fas fa-dollar-sign text-green-600"></i>
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500">
+                                        <i class="fas fa-dollar-sign text-white"></i>
                                     </div>
                                     <span class="ml-3 font-medium text-gray-700">Revenue</span>
                                 </div>
-                                <span class="text-xl font-bold text-green-600">Rp 0</span>
+                                <span class="text-xl font-bold text-green-600">
+                                    Rp {{ number_format($flashSale->sold * $flashSale->discounted_price, 0, ',', '.') }}
+                                </span>
                             </div>
                             <div class="flex items-center justify-between rounded-lg bg-purple-50 p-3">
                                 <div class="flex items-center">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                                        <i class="fas fa-eye text-purple-600"></i>
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500">
+                                        <i class="fas fa-percentage text-white"></i>
                                     </div>
-                                    <span class="ml-3 font-medium text-gray-700">Views</span>
+                                    <span class="ml-3 font-medium text-gray-700">Conversion</span>
                                 </div>
-                                <span class="text-xl font-bold text-purple-600">0</span>
+                                <span class="text-xl font-bold text-purple-600">
+                                    {{ $flashSale->stock > 0 ? number_format(($flashSale->sold / $flashSale->stock) * 100, 1) : 0 }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info -->
+                    <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+                        <div class="border-b border-gray-100 bg-gray-50 px-6 py-4">
+                            <h3 class="font-semibold text-gray-900">
+                                <i class="fas fa-info-circle mr-2 text-gray-600"></i>
+                                Informasi
+                            </h3>
+                        </div>
+                        <div class="space-y-2 p-6 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Created:</span>
+                                <span
+                                    class="font-semibold text-gray-900">{{ $flashSale->created_at->format('d M Y') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Updated:</span>
+                                <span
+                                    class="font-semibold text-gray-900">{{ $flashSale->updated_at->format('d M Y') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ID Flash Sale:</span>
+                                <span class="font-mono font-semibold text-gray-900">#{{ $flashSale->id }}</span>
                             </div>
                         </div>
                     </div>
@@ -732,13 +827,16 @@
 
                         if (diff < 0) return 'Waktu berakhir harus setelah waktu mulai';
 
-                        const hours = Math.floor(diff / (1000 * 60 * 60));
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-                        if (hours > 0) {
-                            return `Durasi: ${hours} jam ${minutes} menit`;
-                        }
-                        return `Durasi: ${minutes} menit`;
+                        let duration = '';
+                        if (days > 0) duration += `${days} hari `;
+                        if (hours > 0) duration += `${hours} jam `;
+                        if (minutes > 0) duration += `${minutes} menit`;
+
+                        return duration.trim() || '0 menit';
                     },
 
                     getStatusText() {
@@ -770,6 +868,7 @@
                         return date.toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'short',
+                            year: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit'
                         });

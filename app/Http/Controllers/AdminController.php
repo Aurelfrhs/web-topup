@@ -23,7 +23,7 @@ class AdminController extends Controller
         $stats = [
             'total_users' => User::where('role', 'user')->count(),
             'total_orders' => Order::count(),
-            'total_revenue' => Order::where('status', 'success')->sum('total_price'),
+            'total_revenue' => Order::where('status', 'success')->sum('amount'),
             'pending_orders' => Order::where('status', 'pending')->count(),
             'total_games' => Game::count(),
             'total_products' => Product::count(),
@@ -44,63 +44,63 @@ class AdminController extends Controller
     }
 
     // // ==================== REPORTS & ANALYTICS ====================
-    // public function salesReport(Request $request)
-    // {
-    //     $startDate = $request->get('start_date', now()->startOfMonth());
-    //     $endDate = $request->get('end_date', now()->endOfMonth());
+    public function salesReport(Request $request)
+    {
+        $startDate = $request->get('start_date', now()->startOfMonth());
+        $endDate = $request->get('end_date', now()->endOfMonth());
 
-    //     $orders = Order::where('status', 'success')
-    //         ->whereBetween('created_at', [$startDate, $endDate])
-    //         ->with(['product.game', 'user'])
-    //         ->get();
+        $orders = Order::where('status', 'success')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->with(['product.game', 'user'])
+            ->get();
 
-    //     $stats = [
-    //         'total_orders' => $orders->count(),
-    //         'total_revenue' => $orders->sum('total_price'),
-    //         'average_order' => $orders->avg('total_price'),
-    //     ];
+        $stats = [
+            'total_orders' => $orders->count(),
+            'total_revenue' => $orders->sum('amount'),
+            'average_order' => $orders->avg('amount'),
+        ];
 
-    //     return view('admin.reports.sales', compact('orders', 'stats', 'startDate', 'endDate'));
-    // }
+        return view('admin.reports.sales', compact('orders', 'stats', 'startDate', 'endDate'));
+    }
 
-    // public function revenueReport(Request $request)
-    // {
-    //     $startDate = $request->get('start_date', now()->startOfMonth());
-    //     $endDate = $request->get('end_date', now()->endOfMonth());
+    public function revenueReport(Request $request)
+    {
+        $startDate = $request->get('start_date', now()->startOfMonth());
+        $endDate = $request->get('end_date', now()->endOfMonth());
 
-    //     $revenue = Order::where('status', 'success')
-    //         ->whereBetween('created_at', [$startDate, $endDate])
-    //         ->selectRaw('DATE(created_at) as date, SUM(total_price) as total, COUNT(*) as count')
-    //         ->groupBy('date')
-    //         ->orderBy('date', 'asc')
-    //         ->get();
+        $revenue = Order::where('status', 'success')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(created_at) as date, SUM(amount) as total, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
 
-    //     return view('admin.reports.revenue', compact('revenue', 'startDate', 'endDate'));
-    // }
+        return view('admin.reports.revenue', compact('revenue', 'startDate', 'endDate'));
+    }
 
-    // public function usersReport(Request $request)
-    // {
-    //     $startDate = $request->get('start_date', now()->startOfMonth());
-    //     $endDate = $request->get('end_date', now()->endOfMonth());
+    public function usersReport(Request $request)
+    {
+        $startDate = $request->get('start_date', now()->startOfMonth());
+        $endDate = $request->get('end_date', now()->endOfMonth());
 
-    //     $newUsers = User::whereBetween('created_at', [$startDate, $endDate])
-    //         ->where('role', 'user')
-    //         ->get();
+        $newUsers = User::whereBetween('created_at', [$startDate, $endDate])
+            ->where('role', 'user')
+            ->get();
 
-    //     $stats = [
-    //         'new_users' => $newUsers->count(),
-    //         'total_users' => User::where('role', 'user')->count(),
-    //         'users_with_orders' => User::whereHas('orders')->count(),
-    //     ];
+        $stats = [
+            'new_users' => $newUsers->count(),
+            'total_users' => User::where('role', 'user')->count(),
+            'users_with_orders' => User::whereHas('orders')->count(),
+        ];
 
-    //     return view('admin.reports.users', compact('newUsers', 'stats', 'startDate', 'endDate'));
-    // }
+        return view('admin.reports.users', compact('newUsers', 'stats', 'startDate', 'endDate'));
+    }
 
-    // public function exportReport(Request $request)
-    // {
-    //     // Implement export logic (CSV/Excel)
-    //     // You can use Laravel Excel package for this
+    public function exportReport(Request $request)
+    {
+        // Implement export logic (CSV/Excel)
+        // You can use Laravel Excel package for this
 
-    //     return back()->with('success', 'Report berhasil diexport');
-    // }
+        return back()->with('success', 'Report berhasil diexport');
+    }
 }

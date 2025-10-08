@@ -17,3 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Customer Order Routes
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'apiIndex']);
+        Route::get('/{id}', [OrderController::class, 'apiShow']);
+        Route::post('/', [OrderController::class, 'store']);
+    });
+
+});

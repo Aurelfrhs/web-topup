@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             BannerSeeder::class,
             FlashSaleSeeder::class,
             SettingSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

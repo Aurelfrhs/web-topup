@@ -189,7 +189,7 @@
                                 </div>
                                 <div class="ml-4 text-right">
                                     <p class="font-semibold text-gray-900">Rp
-                                        {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                                        {{ number_format($order->amount, 0, ',', '.') }}</p>
                                     @if ($order->status === 'success')
                                         <span
                                             class="mt-1 inline-block rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700"

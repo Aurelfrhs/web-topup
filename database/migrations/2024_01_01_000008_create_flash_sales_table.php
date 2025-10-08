@@ -10,19 +10,21 @@ return new class extends Migration {
         Schema::create('flash_sales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->decimal('original_price', 12, 2);
-            $table->decimal('discounted_price', 12, 2);
-            $table->decimal('discount_percentage', 5, 2);
-            $table->integer('stock');
+
+            $table->decimal('original_price', 15, 2);
+            $table->decimal('discounted_price', 15, 2);
+            $table->unsignedTinyInteger('discount_percentage');
+
+            $table->integer('stock')->default(0);
             $table->integer('sold')->default(0);
 
-            // Ubah dari timestamp() menjadi dateTime()
             $table->dateTime('start_time');
             $table->dateTime('end_time');
 
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
             $table->timestamps();
         });
+
     }
 
     public function down(): void

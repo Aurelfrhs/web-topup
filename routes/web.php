@@ -134,10 +134,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // ORDERS MANAGEMENT
     // ===============================
     Route::prefix('orders')->name('orders.')->group(function () {
-        Route::get('/', [OrderController::class, 'orders'])->name('index');
-        Route::get('/{id}', [OrderController::class, 'orderDetail'])->name('show');
-        Route::post('/{id}/status', [OrderController::class, 'updateStatus'])->name('status');
-        Route::post('/{id}/process', [OrderController::class, 'processOrder'])->name('process');
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{id}', [OrderController::class, 'show'])->name('show');
+        Route::put('/{id}/status', [OrderController::class, 'updateStatus'])->name('updateStatus');
+        Route::post('/{id}/process', [OrderController::class, 'process'])->name('process');
+        Route::get('/export', [OrderController::class, 'export'])->name('export');
     });
 
     // ===============================

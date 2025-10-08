@@ -265,7 +265,8 @@
                                     </div>
                                     <div>
                                         <h2 class="text-lg font-semibold text-gray-900">Jadwal Flash Sale</h2>
-                                        <p class="text-sm text-gray-600">Tentukan waktu mulai dan berakhir</p>
+                                        <p class="text-sm text-gray-600">Tentukan waktu mulai dan berakhir (Waktu
+                                            Indonesia)</p>
                                     </div>
                                 </div>
                             </div>
@@ -361,10 +362,10 @@
                                 <label class="flex cursor-pointer items-start space-x-3">
                                     <input
                                         type="checkbox"
-                                        name="is_active"
-                                        value="1"
+                                        name="status"
+                                        value="active"
                                         x-model="isActive"
-                                        {{ old('is_active', 1) ? 'checked' : '' }}
+                                        {{ old('status') == 'active' ? 'checked' : '' }}
                                         class="mt-1 h-5 w-5 rounded border-gray-300 text-red-600 focus:ring-2 focus:ring-red-500"
                                     >
                                     <div class="flex-1">
@@ -494,7 +495,7 @@
                     discountPercentage: {{ old('discount_percentage', 0) }},
                     startTime: '{{ old('start_time') }}',
                     endTime: '{{ old('end_time') }}',
-                    isActive: {{ old('is_active', 1) ? 'true' : 'false' }},
+                    isActive: {{ old('status') == 'active' ? 'true' : 'false' }},
 
                     productInfo: {
                         name: '',

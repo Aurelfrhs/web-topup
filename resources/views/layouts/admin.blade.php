@@ -123,6 +123,15 @@
                 <span>Transaksi</span>
             </a>
 
+            <!-- Transactions -->
+            <a
+                href="{{ route('admin.deposits.index') }}"
+                class="{{ request()->routeIs('admin.orders*') ? 'bg-indigo-600' : '' }} flex items-center space-x-3 rounded-lg px-4 py-3 transition hover:bg-indigo-600"
+            >
+                <i class="fas fa-wallet w-5"></i>
+                <span>Deposit</span>
+            </a>
+
             <!-- Payments -->
             <a
                 href="{{ route('admin.payments.index') }}"

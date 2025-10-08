@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FlashSale;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class FlashSaleController extends Controller
 {
@@ -21,15 +22,23 @@ class FlashSaleController extends Controller
 
         // Filter by status
         if ($request->filled('status')) {
+            $now = Carbon::now('Asia/Jakarta');
+
             switch ($request->status) {
                 case 'active':
-                    $query->active();
+                    $query->where('status', 'active')
+                        ->where('start_time', '<=', $now)
+                        ->where('end_time', '>=', $now);
                     break;
                 case 'upcoming':
-                    $query->upcoming();
+                    $query->where('status', 'active')
+                        ->where('start_time', '>', $now);
                     break;
                 case 'expired':
-                    $query->expired();
+                    $query->where(function ($q) use ($now) {
+                        $q->where('status', 'inactive')
+                            ->orWhere('end_time', '<', $now);
+                    });
                     break;
             }
         }
@@ -51,7 +60,7 @@ class FlashSaleController extends Controller
             'product_id' => 'required|exists:products,id',
             'discount_percentage' => 'required|numeric|min:1|max:99',
             'stock' => 'required|integer|min:1',
-            'start_time' => 'required|date|after_or_equal:now',
+            'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
         ], [
             'product_id.required' => 'Produk harus dipilih',
@@ -62,7 +71,6 @@ class FlashSaleController extends Controller
             'stock.required' => 'Stok harus diisi',
             'stock.min' => 'Stok minimal 1',
             'start_time.required' => 'Waktu mulai harus diisi',
-            'start_time.after_or_equal' => 'Waktu mulai harus setelah atau sama dengan waktu sekarang',
             'end_time.required' => 'Waktu berakhir harus diisi',
             'end_time.after' => 'Waktu berakhir harus setelah waktu mulai',
         ]);
@@ -75,6 +83,10 @@ class FlashSaleController extends Controller
         $discountAmount = ($originalPrice * $validated['discount_percentage']) / 100;
         $discountedPrice = $originalPrice - $discountAmount;
 
+        // Convert times to Asia/Jakarta timezone
+        $startTime = Carbon::parse($validated['start_time'], 'Asia/Jakarta');
+        $endTime = Carbon::parse($validated['end_time'], 'Asia/Jakarta');
+
         // Create flash sale
         FlashSale::create([
             'product_id' => $validated['product_id'],
@@ -83,9 +95,9 @@ class FlashSaleController extends Controller
             'discount_percentage' => $validated['discount_percentage'],
             'stock' => $validated['stock'],
             'sold' => 0,
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'is_active' => $request->has('is_active'),
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'status' => $request->has('status') ? 'active' : 'inactive',
         ]);
 
         return redirect()->route('admin.flash-sales.index')
@@ -119,6 +131,10 @@ class FlashSaleController extends Controller
         $discountAmount = ($originalPrice * $validated['discount_percentage']) / 100;
         $discountedPrice = $originalPrice - $discountAmount;
 
+        // Convert times to Asia/Jakarta timezone
+        $startTime = Carbon::parse($validated['start_time'], 'Asia/Jakarta');
+        $endTime = Carbon::parse($validated['end_time'], 'Asia/Jakarta');
+
         // Update flash sale
         $flashSale->update([
             'product_id' => $validated['product_id'],
@@ -126,9 +142,9 @@ class FlashSaleController extends Controller
             'discounted_price' => $discountedPrice,
             'discount_percentage' => $validated['discount_percentage'],
             'stock' => $validated['stock'],
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'is_active' => $request->has('is_active'),
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'status' => $request->has('status') ? 'active' : 'inactive',
         ]);
 
         return redirect()->route('admin.flash-sales.index')
@@ -148,8 +164,12 @@ class FlashSaleController extends Controller
 
     public function apiIndex()
     {
+        $now = Carbon::now('Asia/Jakarta');
+
         $flashSales = FlashSale::with('product.game')
-            ->active()
+            ->where('status', 'active')
+            ->where('start_time', '<=', $now)
+            ->where('end_time', '>=', $now)
             ->get();
 
         return response()->json(['data' => $flashSales], 200);
@@ -170,6 +190,10 @@ class FlashSaleController extends Controller
         $discountAmount = ($originalPrice * $validated['discount_percentage']) / 100;
         $discountedPrice = $originalPrice - $discountAmount;
 
+        // Convert times to Asia/Jakarta timezone
+        $startTime = Carbon::parse($validated['start_time'], 'Asia/Jakarta');
+        $endTime = Carbon::parse($validated['end_time'], 'Asia/Jakarta');
+
         $flashSale = FlashSale::create([
             'product_id' => $validated['product_id'],
             'original_price' => $originalPrice,
@@ -177,9 +201,9 @@ class FlashSaleController extends Controller
             'discount_percentage' => $validated['discount_percentage'],
             'stock' => $validated['stock'],
             'sold' => 0,
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'is_active' => $request->is_active ?? true,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'status' => $request->status ?? 'active',
         ]);
 
         return response()->json([
@@ -202,7 +226,7 @@ class FlashSaleController extends Controller
             'stock' => 'sometimes|integer|min:1',
             'start_time' => 'sometimes|date',
             'end_time' => 'sometimes|date|after:start_time',
-            'is_active' => 'sometimes|boolean',
+            'status' => 'sometimes|in:active,inactive',
         ]);
 
         if (isset($validated['product_id']) || isset($validated['discount_percentage'])) {
@@ -216,6 +240,14 @@ class FlashSaleController extends Controller
             $validated['original_price'] = $originalPrice;
             $validated['discounted_price'] = $discountedPrice;
             $validated['discount_percentage'] = $discountPercentage;
+        }
+
+        // Convert times to Asia/Jakarta timezone if provided
+        if (isset($validated['start_time'])) {
+            $validated['start_time'] = Carbon::parse($validated['start_time'], 'Asia/Jakarta');
+        }
+        if (isset($validated['end_time'])) {
+            $validated['end_time'] = Carbon::parse($validated['end_time'], 'Asia/Jakarta');
         }
 
         $flashSale->update($validated);
